@@ -22,6 +22,19 @@ class Compression {
     }
 
     // 2. 파일 안 글자를 한 글자씩 읽으면서 각 글자가 몇 개씩 있는지 센다
+
+    SymbolPQ symbolPQ = changeTxtToSymbolPQ(fin);
+
+    symbolPQ.printPQ();
+
+    try {
+      fin.close();
+    } catch (IOException e) {
+      System.out.println("Error closing file");
+    }
+  }
+
+  static SymbolPQ changeTxtToSymbolPQ(FileInputStream fin) {
     // 2-1. 처음 나온 글자면 새롭게 Symbol 객체 생성
     // 2-2. 2번 이상 나온 글자면 해당 Symbol 객체 frequency++
     // Symbol 객체는 배열에 저장하고 후에 우선순위 큐에 저장
@@ -48,12 +61,7 @@ class Compression {
     } catch (IOException e) {
       System.out.println("Error reading file");
     }
-
-    try {
-      fin.close();
-    } catch (IOException e) {
-      System.out.println("Error closing file");
-    }
+    return new SymbolPQ(symbolArray);
   }
 }
 
