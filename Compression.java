@@ -34,11 +34,14 @@ class Compression {
       do {
         i = fin.read();
         if (i != -1) {
-          if (usedSymbol.indexOf((char) i) == -1) {
+          int index = usedSymbol.indexOf((char) i);
+          if (index == -1) {
             Symbol newSymbol = new Symbol((char) i);
-
+            usedSymbol.add((char) i);
+            symbolArray.add(newSymbol);
           } else {
-
+            Symbol oneMore = symbolArray.get(index);
+            oneMore.frequency++;
           }
         }
       } while (i != -1);
@@ -80,7 +83,7 @@ class Symbol implements Comparable<Symbol> {
 
   @Override
   public int compareTo(Symbol another) {
-    return this.frequency - another.symbol;
+    return this.frequency - another.frequency;
   }
 }
 
