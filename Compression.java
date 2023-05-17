@@ -1,12 +1,12 @@
 import java.io.*;
 import java.util.*;
 
-import javax.print.attribute.standard.PrintQuality;
-
 class Compression {
   public static void main(String[] args) {
     // 코드 실행시 파일 이름을 인자로 받는다
-    if (args.length != 1) {
+    if (args.length != 1)
+
+    {
       System.out.println("Usage: Showfile filename");
       return;
     }
@@ -30,62 +30,80 @@ class Compression {
     ArrayList<Character> usedSymbol = new ArrayList<Character>();
 
     try {
+      int i;
+      do {
+        i = fin.read();
+        if (i != -1) {
+
+        }
+      } while (i != -1);
+    } catch (IOException e) {
+      System.out.println("Error reading file");
+    }
+
+    try {
       fin.close();
     } catch (IOException e) {
       System.out.println("Error closing file");
     }
   }
-}
 
-class Symbol implements Comparable<Symbol> {
-  public char symbol;
-  public int frequency;
-  public Symbol left;
-  public Symbol right;
+  class Symbol implements Comparable<Symbol> {
+    public char symbol;
+    public int frequency;
+    public Symbol left;
+    public Symbol right;
 
-  public Symbol(char symbol, int frequency) {
-    this.symbol = symbol;
-    this.frequency = frequency;
-    this.left = null;
-    this.right = null;
-  }
-
-  public Symbol(char symbol) {
-    this(symbol, 1);
-  }
-
-  public boolean isParent() {
-    if (this.left == null) {
-      return false;
+    public Symbol(char symbol, int frequency) {
+      this.symbol = symbol;
+      this.frequency = frequency;
+      this.left = null;
+      this.right = null;
     }
-    return true;
+
+    public Symbol(char symbol) {
+      this(symbol, 1);
+    }
+
+    public boolean isParent() {
+      if (this.left == null) {
+        return false;
+      }
+      return true;
+    }
+
+    @Override
+    public int compareTo(Symbol another) {
+      return this.frequency - another.symbol;
+    }
   }
 
-  @Override
-  public int compareTo(Symbol another) {
-    return this.frequency - another.symbol;
-  }
-}
+  // Priority queue for symbol
+  class SymbolPQ {
+    public ArrayList<Symbol> pq;
 
-// Priority queue for symbol
-class SymbolPQ {
-  public ArrayList<Symbol> pq;
+    public SymbolPQ(ArrayList<Symbol> symbolArray) {
+      pq = symbolArray;
+      Collections.sort(pq);
+    }
 
-  public SymbolPQ(ArrayList<Symbol> symbolArray) {
-    pq = symbolArray;
-    Collections.sort(pq);
-  }
+    public void insert(Symbol newSymbol) {
+      pq.add(newSymbol);
+      int length = pq.size();
+      for (int i = length; i > 0; i--) {
+        if (pq.get(i - 1).frequency > pq.get(i).frequency) {
+          Symbol temp = pq.get(i);
+          pq.add(i, pq.get(i - 1));
+          pq.add(i - 1, temp);
+        } else {
+          break;
+        }
+      }
+    }
 
-  public void insert(Symbol newSymbol) {
-    pq.add(newSymbol);
-    int length = pq.size();
-    for (int i = length; i > 0; i--) {
-      if (pq.get(i - 1).frequency > pq.get(i).frequency) {
-        Symbol temp = pq.get(i);
-        pq.add(i, pq.get(i - 1));
-        pq.add(i - 1, temp);
-      } else {
-        break;
+    public void printPQ() {
+      for (int i = 0; i < pq.size(); i++) {
+        System.out.println(pq.get(i).symbol);
       }
     }
   }
