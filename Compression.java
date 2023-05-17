@@ -1,7 +1,5 @@
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.*;
 
 import javax.print.attribute.standard.PrintQuality;
 
@@ -79,6 +77,16 @@ class SymbolPQ {
   }
 
   public void insert(Symbol newSymbol) {
-
+    pq.add(newSymbol);
+    int length = pq.size();
+    for (int i = length; i > 0; i--) {
+      if (pq.get(i - 1).frequency > pq.get(i).frequency) {
+        Symbol temp = pq.get(i);
+        pq.add(i, pq.get(i - 1));
+        pq.add(i - 1, temp);
+      } else {
+        break;
+      }
+    }
   }
 }
