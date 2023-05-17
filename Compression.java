@@ -1,5 +1,7 @@
 import java.io.*;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import javax.print.attribute.standard.PrintQuality;
 
@@ -25,9 +27,9 @@ class Compression {
     // 2-1. 처음 나온 글자면 새롭게 Symbol 객체 생성
     // 2-2. 2번 이상 나온 글자면 해당 Symbol 객체 frequency++
     // Symbol 객체는 배열에 저장하고 후에 우선순위 큐에 저장
-    Symbol[] symbolArray;
+    ArrayList<Symbol> symbolArray = new ArrayList<Symbol>();
     // symbolArray와 usedSymbol의 인덱스가 같으면 글자도 같다
-    char[] usedSymbol;
+    ArrayList<Character> usedSymbol = new ArrayList<Character>();
 
     try {
       fin.close();
@@ -67,11 +69,16 @@ class Symbol implements Comparable<Symbol> {
   }
 }
 
-class SymbolPriorityQueue {
-  public Symbol[] pq;
+// Priority queue for symbol
+class SymbolPQ {
+  public ArrayList<Symbol> pq;
 
-  public SymbolPriorityQueue(Symbol[] symbolArray) {
+  public SymbolPQ(ArrayList<Symbol> symbolArray) {
     pq = symbolArray;
-    Arrays.sort(pq);
+    Collections.sort(pq);
+  }
+
+  public void insert(Symbol newSymbol) {
+
   }
 }
