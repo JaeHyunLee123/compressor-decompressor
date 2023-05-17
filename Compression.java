@@ -1,13 +1,16 @@
 import java.io.*;
+import java.util.Arrays;
+
+import javax.print.attribute.standard.PrintQuality;
 
 class Compression {
   public static void main(String[] args) {
-    //코드 실행시 파일 이름을 인자로 받는다
+    // 코드 실행시 파일 이름을 인자로 받는다
     if (args.length != 1) {
       System.out.println("Usage: Showfile filename");
       return;
     }
-    
+
     // 1. 파일을 불러온다
     FileInputStream fin;
 
@@ -21,6 +24,10 @@ class Compression {
     // 2. 파일 안 글자를 한 글자씩 읽으면서 각 글자가 몇 개씩 있는지 센다
     // 2-1. 처음 나온 글자면 새롭게 Symbol 객체 생성
     // 2-2. 2번 이상 나온 글자면 해당 Symbol 객체 frequency++
+    // Symbol 객체는 배열에 저장하고 후에 우선순위 큐에 저장
+    Symbol[] symbolArray;
+    // symbolArray와 usedSymbol의 인덱스가 같으면 글자도 같다
+    char[] usedSymbol;
 
     try {
       fin.close();
@@ -30,7 +37,7 @@ class Compression {
   }
 }
 
-class Symbol {
+class Symbol implements Comparable<Symbol> {
   public char symbol;
   public int frequency;
   public Symbol left;
@@ -53,9 +60,18 @@ class Symbol {
     }
     return true;
   }
+
+  @Override
+  public int compareTo(Symbol another) {
+    return this.frequency - another.symbol;
+  }
 }
 
 class SymbolPriorityQueue {
   public Symbol[] pq;
 
+  public SymbolPriorityQueue(Symbol[] symbolArray) {
+    pq = symbolArray;
+    Arrays.sort(pq);
+  }
 }
