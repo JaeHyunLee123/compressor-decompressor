@@ -24,6 +24,8 @@ class Compression {
     // 3. Make huffman code
     Symbol huffmanCode = makeHuffmanCode(symbolPQ);
 
+    huffmanCode.showHuffmanCode();
+
     // Close file
     try {
       fin.close();
@@ -102,7 +104,12 @@ class Symbol implements Comparable<Symbol> {
   }
 
   public void showHuffmanCode(String code) {
-
+    if (this.isLeaf()) {
+      System.out.println("Symbol: " + this.symbol + ", Code: " + code + ", Frequency: " + this.frequency);
+    } else {
+      this.left.showHuffmanCode(code + "0");
+      this.right.showHuffmanCode(code + "1");
+    }
   }
 
   public void showHuffmanCode() {
