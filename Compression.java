@@ -21,11 +21,8 @@ class Compression {
     // 2. 파일 안 글자를 한 글자씩 읽으면서 각 글자가 몇 개씩 있는지 센다
     SymbolPQ symbolPQ = changeTxtToSymbolPQ(fin);
 
-    Symbol test = new Symbol('Y', 2);
-
-    symbolPQ.insert(test);
-
-    symbolPQ.printPQ();
+    // 3. Make huffman code
+    Symbol huffmanCode = makeHuffmanCode(symbolPQ);
 
     // Close file
     try {
@@ -64,6 +61,20 @@ class Compression {
     }
     return new SymbolPQ(symbolArray);
   }
+
+  static Symbol makeHuffmanCode(SymbolPQ PQ) {
+    while (PQ.pq.size() > 1) {
+      Symbol p = PQ.popFront();
+      Symbol q = PQ.popFront();
+
+      Symbol merged = new Symbol('M', p.frequency + q.frequency);
+      merged.left = p;
+      merged.right = q;
+
+      PQ.insert(merged);
+    }
+    return PQ.pq.get(0);
+  }
 }
 
 class Symbol implements Comparable<Symbol> {
@@ -83,11 +94,19 @@ class Symbol implements Comparable<Symbol> {
     this(symbol, 1);
   }
 
-  public boolean isParent() {
+  public boolean isLeaf() {
     if (this.left == null) {
-      return false;
+      return true;
     }
-    return true;
+    return false;
+  }
+
+  public void showHuffmanCode(String code) {
+
+  }
+
+  public void showHuffmanCode() {
+    this.showHuffmanCode("");
   }
 
   @Override
