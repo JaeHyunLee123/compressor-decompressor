@@ -4,16 +4,13 @@ import java.util.*;
 class Compression {
   public static void main(String[] args) {
     // 코드 실행시 파일 이름을 인자로 받는다
-    if (args.length != 1)
-
-    {
+    if (args.length != 1) {
       System.out.println("Usage: Showfile filename");
       return;
     }
 
     // 1. 파일을 불러온다
     FileInputStream fin;
-
     try {
       fin = new FileInputStream(args[0]);
     } catch (FileNotFoundException e) {
@@ -22,11 +19,15 @@ class Compression {
     }
 
     // 2. 파일 안 글자를 한 글자씩 읽으면서 각 글자가 몇 개씩 있는지 센다
-
     SymbolPQ symbolPQ = changeTxtToSymbolPQ(fin);
+
+    Symbol test = new Symbol('Y', 2);
+
+    symbolPQ.insert(test);
 
     symbolPQ.printPQ();
 
+    // Close file
     try {
       fin.close();
     } catch (IOException e) {
@@ -108,11 +109,11 @@ class SymbolPQ {
   // insert new symbol at last index and sort
   public void insert(Symbol newSymbol) {
     pq.add(newSymbol);
-    for (int i = pq.size(); i > 0; i--) {
+    for (int i = pq.size() - 1; i > 0; i--) {
       if (pq.get(i - 1).frequency > pq.get(i).frequency) {
         Symbol temp = pq.get(i);
-        pq.add(i, pq.get(i - 1));
-        pq.add(i - 1, temp);
+        pq.set(i, pq.get(i - 1));
+        pq.set(i - 1, temp);
       } else {
         break;
       }
