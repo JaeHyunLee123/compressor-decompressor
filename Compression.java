@@ -23,14 +23,25 @@ class Compression {
 
     // 3. Make huffman code
     Symbol huffmanCode = makeHuffmanCode(symbolPQ);
+    HashMap<Character, String> codeMap = huffmanCode.makeCodeMap();
 
     huffmanCode.showHuffmanCode();
+
+    printHashMap(codeMap);
 
     // Close file
     try {
       fin.close();
     } catch (IOException e) {
       System.out.println("Error closing file");
+    }
+  }
+
+  public static void printHashMap(HashMap<Character, String> map) {
+    for (Map.Entry<Character, String> entry : map.entrySet()) {
+      Character key = entry.getKey();
+      String value = entry.getValue();
+      System.out.println("Key: " + key + ", Value: " + value);
     }
   }
 
@@ -110,6 +121,23 @@ class Symbol implements Comparable<Symbol> {
       this.left.showHuffmanCode(code + "0");
       this.right.showHuffmanCode(code + "1");
     }
+  }
+
+  private void getCode(String code, HashMap<Character, String> codeMap) {
+    if (this.isLeaf()) {
+      codeMap.put(this.symbol, code);
+    } else {
+      this.left.getCode(code + "0", codeMap);
+      this.right.getCode(code + "1", codeMap);
+    }
+  }
+
+  public HashMap<Character, String> makeCodeMap() {
+    HashMap<Character, String> codeMap = new HashMap<>();
+
+    this.getCode("", codeMap);
+
+    return codeMap;
   }
 
   public void showHuffmanCode() {
