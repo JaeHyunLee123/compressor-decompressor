@@ -13,7 +13,7 @@ javac Compression.java
 2. run
 
 ```bash
-java Compression "txt file"
+java Compression "txt file that you want to compress"
 ```
 
 ## Environment

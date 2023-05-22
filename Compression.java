@@ -3,13 +3,13 @@ import java.util.*;
 
 class Compression {
   public static void main(String[] args) {
-    // 코드 실행시 파일 이름을 인자로 받는다
+    // First argument is file that this code compressing
     if (args.length != 1) {
       System.out.println("Usage: Showfile filename");
       return;
     }
 
-    // 1. 파일을 불러온다
+    // Load file
     FileInputStream fin;
     try {
       fin = new FileInputStream(args[0]);
@@ -18,27 +18,32 @@ class Compression {
       return;
     }
 
-    // 2. 파일 안 글자를 한 글자씩 읽으면서 각 글자가 몇 개씩 있는지 센다
+    System.out.println("Compressing! Please wait some minutes!");
+
+    // count the number of each character in file
     SymbolPQ symbolPQ = changeTxtToSymbolPQ(fin);
 
-    // 3. Make huffman code
+    // Make huffman code
     Symbol huffmanCode = makeHuffmanCode(symbolPQ);
 
+    // Mapping symbol and code to write codes to output file
     HashMap<Character, String> codeMap = huffmanCode.makeCodeMap();
+    // Mapping symbol and frequency to write header of output file
     HashMap<Character, Integer> frequencyMap = huffmanCode.makeFrequencyMap();
     Set<Character> keys = codeMap.keySet();
 
-    String fileName = args[0] + "-compressed.htf";
+    String readableFile = args[0] + "-compressed.hft";
+    String binaryFile = args[0] + "-compressed.hfb";
 
-    writeHeader(fileName, keys, codeMap, frequencyMap);
-
+    // write header to readable file
+    writeHeader(readableFile, keys, codeMap, frequencyMap);
     try {
       fin.getChannel().position(0);
     } catch (IOException e) {
       System.out.println("Error get channel position to 0");
     }
-
-    writeCode(fileName, keys, codeMap, fin);
+    // write code to readable file
+    String wholeCode = writeCode(readableFile, keys, codeMap, fin);
 
     // Close file
     try {
@@ -46,6 +51,8 @@ class Compression {
     } catch (IOException e) {
       System.out.println("Error closing file");
     }
+
+    System.out.println("Compressed!");
   }
 
   static void writeHeader(String fileName, Set<Character> keys, HashMap<Character, String> codeMap,
@@ -77,20 +84,20 @@ class Compression {
     }
   }
 
-  static void writeCode(String fileName, Set<Character> keys, HashMap<Character, String> codeMap, FileInputStream fin) {
-    System.out.println("Write code!");
+  static String writeCode(String fileName, Set<Character> keys, HashMap<Character, String> codeMap,
+      FileInputStream fin) {
+    String wholeCode = "";
 
     try {
       int i;
       do {
         i = fin.read();
-        // System.out.print(i);
         if (i != -1) {
           String code = codeMap.get((char) i);
-          // System.out.print(i);
           try {
             FileWriter fileWriter = new FileWriter(fileName, true);
             fileWriter.write(code);
+            wholeCode += code;
             fileWriter.close();
           } catch (IOException e) {
             System.out.println("An error occurred while creating the file.");
@@ -101,14 +108,7 @@ class Compression {
     } catch (IOException e) {
       System.out.println("Error reading file");
     }
-  }
-
-  static <T> void printHashMap(HashMap<Character, T> map) {
-    for (Map.Entry<Character, T> entry : map.entrySet()) {
-      Character key = entry.getKey();
-      T value = entry.getValue();
-      System.out.println("Key: " + key + ", Value: " + value);
-    }
+    return wholeCode;
   }
 
   static SymbolPQ changeTxtToSymbolPQ(FileInputStream fin) {
@@ -223,17 +223,12 @@ class Symbol implements Comparable<Symbol> {
     return frequencyMap;
   }
 
-  public void showHuffmanCode() {
-    this.showHuffmanCode("");
-  }
-
   @Override
   public int compareTo(Symbol another) {
     return this.frequency - another.frequency;
   }
 }
 
-// Priority queue for symbol
 class SymbolPQ {
   public ArrayList<Symbol> pq;
 
@@ -262,11 +257,5 @@ class SymbolPQ {
     Symbol removing = pq.get(0);
     pq.remove(0);
     return removing;
-  }
-
-  public void printPQ() {
-    for (int i = 0; i < pq.size(); i++) {
-      System.out.println("Symbol: " + pq.get(i).symbol + ", Frequency: " + pq.get(i).frequency);
-    }
   }
 }

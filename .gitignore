@@ -4,4 +4,6 @@ test.java
 
 *.class
 
-*.htf
+*.hft
+
+*.hfb
