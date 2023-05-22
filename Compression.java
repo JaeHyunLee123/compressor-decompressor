@@ -24,10 +24,10 @@ class Compression {
     // 3. Make huffman code
     Symbol huffmanCode = makeHuffmanCode(symbolPQ);
     HashMap<Character, String> codeMap = huffmanCode.makeCodeMap();
-
-    huffmanCode.showHuffmanCode();
+    HashMap<Character, Integer> frequencyMap = huffmanCode.makeFrequencyMap();
 
     printHashMap(codeMap);
+    printHashMap(frequencyMap);
 
     // Close file
     try {
@@ -37,10 +37,10 @@ class Compression {
     }
   }
 
-  public static void printHashMap(HashMap<Character, String> map) {
-    for (Map.Entry<Character, String> entry : map.entrySet()) {
+  public static <T> void printHashMap(HashMap<Character, T> map) {
+    for (Map.Entry<Character, T> entry : map.entrySet()) {
       Character key = entry.getKey();
-      String value = entry.getValue();
+      T value = entry.getValue();
       System.out.println("Key: " + key + ", Value: " + value);
     }
   }
@@ -138,6 +138,23 @@ class Symbol implements Comparable<Symbol> {
     this.getCode("", codeMap);
 
     return codeMap;
+  }
+
+  private void getFrequency(HashMap<Character, Integer> frequencyMap) {
+    if (this.isLeaf()) {
+      frequencyMap.put(this.symbol, this.frequency);
+    } else {
+      this.left.getFrequency(frequencyMap);
+      this.right.getFrequency(frequencyMap);
+    }
+  }
+
+  public HashMap<Character, Integer> makeFrequencyMap() {
+    HashMap<Character, Integer> frequencyMap = new HashMap<>();
+
+    this.getFrequency(frequencyMap);
+
+    return frequencyMap;
   }
 
   public void showHuffmanCode() {
