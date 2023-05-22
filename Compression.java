@@ -25,6 +25,11 @@ class Compression {
     Symbol huffmanCode = makeHuffmanCode(symbolPQ);
     HashMap<Character, String> codeMap = huffmanCode.makeCodeMap();
     HashMap<Character, Integer> frequencyMap = huffmanCode.makeFrequencyMap();
+    Set<Character> keys = codeMap.keySet();
+
+    String fileName = args[0] + "-compressed.htf";
+
+    writeHeader(fileName, keys, codeMap, frequencyMap);
 
     printHashMap(codeMap);
     printHashMap(frequencyMap);
@@ -37,7 +42,36 @@ class Compression {
     }
   }
 
-  public static <T> void printHashMap(HashMap<Character, T> map) {
+  static void writeHeader(String fileName, Set<Character> keys, HashMap<Character, String> codeMap,
+      HashMap<Character, Integer> frequencyMap) {
+    Iterator<Character> iterator = keys.iterator();
+
+    // just initailize
+    try {
+      FileWriter fileWriter = new FileWriter(fileName);
+      fileWriter.write("");
+      fileWriter.close();
+    } catch (IOException e) {
+      System.out.println("An error occurred while creating the file.");
+      e.printStackTrace();
+    }
+
+    while (iterator.hasNext()) {
+      char key = iterator.next();
+      String content = String.valueOf(key) + "(" + String.valueOf(frequencyMap.get(key)) + "):"
+          + String.valueOf(frequencyMap.get(key)) + " ";
+      try {
+        FileWriter fileWriter = new FileWriter(fileName, true);
+        fileWriter.write(content);
+        fileWriter.close();
+      } catch (IOException e) {
+        System.out.println("An error occurred while creating the file.");
+        e.printStackTrace();
+      }
+    }
+  }
+
+  static <T> void printHashMap(HashMap<Character, T> map) {
     for (Map.Entry<Character, T> entry : map.entrySet()) {
       Character key = entry.getKey();
       T value = entry.getValue();
