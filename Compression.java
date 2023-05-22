@@ -45,8 +45,31 @@ class Compression {
     // write code to readable file
     String wholeCode = writeCode(readableFile, keys, codeMap, fin);
 
+    // Convert the binary string to a bit sequence
+    long bitSequence = 0L;
+    int length = wholeCode.length();
+
+    for (int i = 0; i < length; i++) {
+      char c = wholeCode.charAt(i);
+      if (c == '1') {
+        bitSequence |= (1L << (length - 1 - i));
+      }
+    }
+
+    // Write the bit sequence to a binary file
+    try (FileOutputStream fos = new FileOutputStream(binaryFile)) {
+      // Write the bit sequence as bytes
+      for (int i = 0; i < length; i += 8) {
+        byte b = (byte) ((bitSequence >> (length - 1 - i)) & 0xFF);
+        fos.write(b);
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
     // Close file
-    try {
+    try
+    {
       fin.close();
     } catch (IOException e) {
       System.out.println("Error closing file");
