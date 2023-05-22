@@ -23,6 +23,7 @@ class Compression {
 
     // 3. Make huffman code
     Symbol huffmanCode = makeHuffmanCode(symbolPQ);
+
     HashMap<Character, String> codeMap = huffmanCode.makeCodeMap();
     HashMap<Character, Integer> frequencyMap = huffmanCode.makeFrequencyMap();
     Set<Character> keys = codeMap.keySet();
@@ -31,8 +32,13 @@ class Compression {
 
     writeHeader(fileName, keys, codeMap, frequencyMap);
 
-    printHashMap(codeMap);
-    printHashMap(frequencyMap);
+    try {
+      fin.getChannel().position(0);
+    } catch (IOException e) {
+      System.out.println("Error get channel position to 0");
+    }
+
+    writeCode(fileName, keys, codeMap, fin);
 
     // Close file
     try {
@@ -59,7 +65,7 @@ class Compression {
     while (iterator.hasNext()) {
       char key = iterator.next();
       String content = String.valueOf(key) + "(" + String.valueOf(frequencyMap.get(key)) + "):"
-          + String.valueOf(frequencyMap.get(key)) + " ";
+          + String.valueOf(codeMap.get(key)) + " ";
       try {
         FileWriter fileWriter = new FileWriter(fileName, true);
         fileWriter.write(content);
@@ -68,6 +74,32 @@ class Compression {
         System.out.println("An error occurred while creating the file.");
         e.printStackTrace();
       }
+    }
+  }
+
+  static void writeCode(String fileName, Set<Character> keys, HashMap<Character, String> codeMap, FileInputStream fin) {
+    System.out.println("Write code!");
+
+    try {
+      int i;
+      do {
+        i = fin.read();
+        // System.out.print(i);
+        if (i != -1) {
+          String code = codeMap.get((char) i);
+          // System.out.print(i);
+          try {
+            FileWriter fileWriter = new FileWriter(fileName, true);
+            fileWriter.write(code);
+            fileWriter.close();
+          } catch (IOException e) {
+            System.out.println("An error occurred while creating the file.");
+            e.printStackTrace();
+          }
+        }
+      } while (i != -1);
+    } catch (IOException e) {
+      System.out.println("Error reading file");
     }
   }
 
