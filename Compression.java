@@ -45,6 +45,20 @@ class Compression {
     // write code to readable file
     String wholeCode = writeCode(readableFile, keys, codeMap, fin);
 
+    writeBinaryFile(wholeCode, binaryFile, keys, codeMap);
+
+    // Close file
+    try {
+      fin.close();
+    } catch (IOException e) {
+      System.out.println("Error closing file");
+    }
+
+    System.out.println("Compressed!");
+  }
+
+  static void writeBinaryFile(String wholeCode, String fileName, Set<Character> keys,
+      HashMap<Character, String> codeMap) {
     // Convert the binary string to a bit sequence
     long bitSequence = 0L;
     int length = wholeCode.length();
@@ -56,8 +70,33 @@ class Compression {
       }
     }
 
-    // Write the bit sequence to a binary file
-    try (FileOutputStream fos = new FileOutputStream(binaryFile)) {
+    // Write code to a binary file
+    try (FileOutputStream fos = new FileOutputStream(fileName)) {
+      Iterator<Character> iterator = keys.iterator();
+      // just initailize
+      try {
+        FileWriter fileWriter = new FileWriter(fileName);
+        fileWriter.write("");
+        fileWriter.close();
+      } catch (IOException e) {
+        System.out.println("An error occurred while creating the file.");
+        e.printStackTrace();
+      }
+
+      // write header
+      while (iterator.hasNext()) {
+        char key = iterator.next();
+        String content = String.valueOf(key) + ":" + String.valueOf(codeMap.get(key)) + " ";
+        try {
+          FileWriter fileWriter = new FileWriter(fileName, true);
+          fileWriter.write(content);
+          fileWriter.close();
+        } catch (IOException e) {
+          System.out.println("An error occurred while creating the file.");
+          e.printStackTrace();
+        }
+      }
+
       // Write the bit sequence as bytes
       for (int i = 0; i < length; i += 8) {
         byte b = (byte) ((bitSequence >> (length - 1 - i)) & 0xFF);
@@ -66,16 +105,6 @@ class Compression {
     } catch (IOException e) {
       e.printStackTrace();
     }
-
-    // Close file
-    try
-    {
-      fin.close();
-    } catch (IOException e) {
-      System.out.println("Error closing file");
-    }
-
-    System.out.println("Compressed!");
   }
 
   static void writeHeader(String fileName, Set<Character> keys, HashMap<Character, String> codeMap,
