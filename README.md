@@ -16,6 +16,11 @@ javac Compression.java
 java Compression "txt file that you want to compress"
 ```
 
+3. result
+
+".hfb" is compressed bianry file.
+".hft" is human readable file which explains freqeuncy and code of each character and show how binary file has written using '0' and '1';
+
 ## Environment
 
 - OS: WSL2 (ubuntu 20.04.6 LTS)
